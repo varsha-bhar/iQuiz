@@ -6,9 +6,9 @@ import SwiftUI
 
 // Sample Data
 let sampleQuizzes = [
-    Quiz(title: "Mathematics", description: "Test your number skills", iconName: "math_icon"),
+    Quiz(title: "Mathematics", description: "Let's test your math brain", iconName: "math_icon"),
     Quiz(title: "Marvel Superheros", description: "Do you know your heros?", iconName: "marvel_icon"),
-    Quiz(title: "Science", description: "Explore the laws of nature", iconName: "science_icon")
+    Quiz(title: "Science", description: "Think like a scientist!", iconName: "science_icon")
 ]
 
 struct ContentView: View {
@@ -23,6 +23,7 @@ struct ContentView: View {
                         .resizable()
                         .frame(width: 40, height: 40)
                         .clipShape(Circle())
+                    
                     VStack(alignment: .leading) {
                         Text(quiz.title)
                             .font(.headline)
