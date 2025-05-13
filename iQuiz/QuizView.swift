@@ -15,15 +15,14 @@ struct QuizView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            
             // switch between 3 states: question, answer, finished
             switch viewModel.currentScene {
 
-            // question state
+            // question sceen
             case .question(let index):
                 let question = viewModel.quiz.questions[index]
                 let total = viewModel.quiz.questions.count
-                
+
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Question \(index + 1) of \(total)")
                         .font(.headline)
@@ -42,7 +41,7 @@ struct QuizView: View {
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(8)
                         .onTapGesture {
-                            selectedIndex = i // save selected answer
+                            selectedIndex = i
                         }
                     }
 
@@ -58,10 +57,10 @@ struct QuizView: View {
                         .buttonStyle(.borderedProminent)
                         Spacer()
                     }
-                    
+
                     Spacer()
 
-                    // indicate swiping?
+                    // indicate swiping ability?
                     if showSwipeHint {
                         HStack {
                             Image("swipe_left_icon")
@@ -75,7 +74,6 @@ struct QuizView: View {
                                 .resizable()
                                 .frame(width: 40, height: 40)
                                 .opacity(0.4)
-
                         }
                         .transition(.opacity)
                         .padding(.horizontal)
@@ -90,7 +88,7 @@ struct QuizView: View {
                     }
                 }
 
-            // answer state
+            // answer scene
             case .answer(let index, let selected):
                 let question = viewModel.quiz.questions[index]
                 let isCorrect = selected == question.correctIndex
@@ -117,6 +115,7 @@ struct QuizView: View {
                     .buttonStyle(.borderedProminent)
                 }
 
+            // finished scene
             case .finished:
                 let total = viewModel.quiz.questions.count
                 let score = viewModel.score
@@ -125,14 +124,11 @@ struct QuizView: View {
                 let message = {
                     if ratio == 1.0 {
                         return "🎉 Perfect Score!"
-                    }
-                    else if ratio >= 0.7 {
+                    } else if ratio >= 0.7 {
                         return "👏 Almost there!"
-                    }
-                    else if ratio >= 0.4 {
+                    } else if ratio >= 0.4 {
                         return "👍 Nice try!"
-                    }
-                    else {
+                    } else {
                         return "💡 Keep practicing!"
                     }
                 }()
@@ -156,43 +152,54 @@ struct QuizView: View {
             }
         }
         .padding()
+        .contentShape(Rectangle()) //
         
         // HANDLE SWIPING
         .gesture(
             DragGesture(minimumDistance: 10, coordinateSpace: .local)
                 .onEnded { value in
-                    let horizontal = value.translation.width
-                    let vertical = value.translation.height
+                    let dx = value.translation.width
+                    let dy = value.translation.height
 
-                    // only respond to horizontal (ignore swipe up and down)
-                    if abs(horizontal) > abs(vertical) {
-                        if horizontal > 50 { // SWIPE RIGHT
-                            switch viewModel.currentScene {
-                            
-                            // submit the selected answer
-                            case .question(let index):
-                                if let selected = selectedIndex {
-                                    viewModel.submitAnswer(index: index, selected: selected)
-                                    selectedIndex = nil
-                                }
-                            
-                            // move to next question
-                            case .answer(let index, _):
-                                viewModel.nextScene(after: index)
-                            
-                            case .finished:
-                                break
-                            }
+                    // print("Final swipe: \(value.translation)")
+
+                    if abs(dx) > 50 && abs(dx) > abs(dy) {
+                        if dx > 0 {
+                            print("👉 Right swipe")
+                            handleRightSwipe()
                         }
-                        else if horizontal < -50 { // SWIPE LEFT
-                            // abandon quiz and return to topics
-                            viewModel.reset()
-                            dismiss()
+                        else {
+                            // print("👈 Left swipe")
+                            handleLeftSwipe()
                         }
+                    }
+                    else {
+                        // print("Not a valid horizontal swipe")
                     }
                 }
         )
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    
+    // swipe handler helper functions
+    private func handleRightSwipe() {
+        switch viewModel.currentScene {
+        case .question(let index):
+            if let selected = selectedIndex {
+                viewModel.submitAnswer(index: index, selected: selected)
+                selectedIndex = nil
+            }
+        case .answer(let index, _):
+            viewModel.nextScene(after: index)
+        case .finished:
+            break
+        }
+    }
+
+    private func handleLeftSwipe() {
+        viewModel.reset()
+        dismiss()
     }
 }
 
