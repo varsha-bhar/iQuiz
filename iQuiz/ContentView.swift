@@ -1,15 +1,11 @@
+//
 //  ContentView.swift
 //  iQuiz
+//
 //  Created by Varsha Bharath on 5/5/25.
+//
 
 import SwiftUI
-
-// Sample Data
-let sampleQuizzes = [
-    Quiz(title: "Mathematics", description: "Let's test your math brain", iconName: "math_icon"),
-    Quiz(title: "Marvel Superheros", description: "Do you know your heros?", iconName: "marvel_icon"),
-    Quiz(title: "Science", description: "Think like a scientist!", iconName: "science_icon")
-]
 
 struct ContentView: View {
     let quizzes = sampleQuizzes
@@ -18,21 +14,23 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List(quizzes) { quiz in
-                HStack {
-                    Image(quiz.iconName)
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
-                    
-                    VStack(alignment: .leading) {
-                        Text(quiz.title)
-                            .font(.headline)
-                        Text(quiz.description)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                NavigationLink(destination: QuizView(viewModel: QuizViewModel(quiz: quiz))) {
+                    HStack {
+                        Image(quiz.iconName)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .clipShape(Circle())
+
+                        VStack(alignment: .leading) {
+                            Text(quiz.title)
+                                .font(.headline)
+                            Text(quiz.description)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
                     }
+                    .padding(.vertical, 5)
                 }
-                .padding(.vertical, 5)
             }
             .navigationTitle("iQuiz")
             .toolbar {
