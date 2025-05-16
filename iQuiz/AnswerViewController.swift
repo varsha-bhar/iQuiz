@@ -29,6 +29,16 @@ class AnswerViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configure()
         
+        // Swipe right = next
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextTapped))
+        rightSwipe.direction = .right
+        view.addGestureRecognizer(rightSwipe)
+
+        // Swipe left = exit
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(exitQuiz))
+        leftSwipe.direction = .left
+        view.addGestureRecognizer(leftSwipe)
+        
         if let selected = selectedAnswerIndex, selected == correctAnswerIndex {
             correctAnswers += 1
         }
@@ -81,6 +91,10 @@ class AnswerViewController: UIViewController {
             finishedVC.correctAnswers = correctAnswers
             finishedVC.quizTitle = quiz.title
         }
+    }
+    
+    @objc func exitQuiz() {
+        navigationController?.popToRootViewController(animated: true)
     }
     
 }

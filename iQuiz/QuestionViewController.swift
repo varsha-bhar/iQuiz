@@ -30,6 +30,16 @@ class QuestionViewController: UIViewController {
         view.backgroundColor = .systemBackground
         submitButton.isEnabled = false
         title = quiz.title
+        
+        // Swipe Right = submit answer
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(submitAnswer))
+        rightSwipe.direction = .right
+        view.addGestureRecognizer(rightSwipe)
+
+        // Swipe Left = exit quiz
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(exitQuiz))
+        leftSwipe.direction = .left
+        view.addGestureRecognizer(leftSwipe)
 
         let question = quiz.questions[currentQuestionIndex]
         questionLabel.text = question.text
@@ -67,7 +77,6 @@ class QuestionViewController: UIViewController {
     }
 
     
-    
     @IBAction func submitTapped(_ sender: UIButton) {
         guard selectedAnswerIndex != nil else { return }
         performSegue(withIdentifier: "showAnswerScene", sender: self)
@@ -85,6 +94,16 @@ class QuestionViewController: UIViewController {
             dest.currentQuestionIndex = currentQuestionIndex
             dest.correctAnswers = correctAnswers
         }
+    }
+    
+    @objc func submitAnswer() {
+        guard selectedAnswerIndex != nil else { return }
+        performSegue(withIdentifier: "showAnswerScene", sender: self)
+    }
+
+    @objc func exitQuiz() {
+        correctAnswers = 0  // 🧹 Discard score if exiting early
+        navigationController?.popToRootViewController(animated: true)
     }
     
 }
