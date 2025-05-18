@@ -1,11 +1,3 @@
-//
-//  RemoteQuiz.swift
-//  iQuiz
-//
-//  Created by Varsha Bharath on 5/16/25.
-//
-
-
 import Foundation
 
 struct RemoteQuiz: Codable {

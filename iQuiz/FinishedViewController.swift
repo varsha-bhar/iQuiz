@@ -1,11 +1,3 @@
-//
-//  FinishedViewController.swift
-//  iQuiz
-//
-//  Created by Varsha Bharath on 5/16/25.
-//
-
-
 import UIKit
 
 class FinishedViewController: UIViewController {

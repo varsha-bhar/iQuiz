@@ -11,7 +11,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         fetcher.quizzes
     }
     
+    // EC pull to refresh
+    let refreshControl = UIRefreshControl()
     private var cancellables = Set<AnyCancellable>()
+    // EC Timed Refresh
+    var refreshTimer: Timer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +23,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         title = "iQuiz"
         tableView.delegate = self
         tableView.dataSource = self
+        
+        refreshControl.addTarget(self, action: #selector(refreshPulled), for: .valueChanged)
+        tableView.refreshControl = refreshControl
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "Settings",
@@ -27,7 +34,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             action: #selector(showSettings)
         )
         
-        // ✅ Observe changes to quizzes
         fetcher.$quizzes
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -35,7 +41,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
             .store(in: &cancellables)
 
-        // ✅ Optional: print error messages
         fetcher.$errorMessage
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
@@ -46,9 +51,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
             .store(in: &cancellables)
 
-        // ✅ Start fetching
         let savedURL = UserDefaults.standard.string(forKey: "quizSourceURL") ?? "http://tednewardsandbox.site44.com/questions.json"
+        let interval = UserDefaults.standard.integer(forKey: "refreshInterval")
         fetcher.fetch(from: savedURL)
+        if interval > 0 {
+            startTimedRefresh(with: interval)
+        }
+    }
+    
+    // EC pull to refresh
+    @objc func refreshPulled() {
+        fetcher.fetch(from: "http://tednewardsandbox.site44.com/questions.json")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.refreshControl.endRefreshing()
+        }
     }
 
 
@@ -72,23 +88,42 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         return cell
     }
     
+    func startTimedRefresh(with interval: Int) {
+        refreshTimer?.invalidate()  // Clear existing timer
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval), repeats: true) { [weak self] _ in
+            let url = UserDefaults.standard.string(forKey: "quizSourceURL") ?? "http://tednewardsandbox.site44.com/questions.json"
+            self?.fetcher.fetch(from: url)
+        }
+    }
+    
     @objc func showSettings() {
-        let alert = UIAlertController(title: "Settings", message: "Enter quiz source URL", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Settings", message: "Enter quiz source URL and refresh interval (in seconds)", preferredStyle: .alert)
 
         alert.addTextField { textField in
             textField.placeholder = "Enter URL"
             textField.text = UserDefaults.standard.string(forKey: "quizSourceURL") ?? "http://tednewardsandbox.site44.com/questions.json"
         }
+        
+        // EC refresh in user default
+        alert.addTextField { textField in
+            textField.placeholder = "Refresh interval (seconds)"
+            textField.keyboardType = .numberPad
+            textField.text = "\(UserDefaults.standard.integer(forKey: "refreshInterval"))"
+        }
 
         alert.addAction(UIAlertAction(title: "Check Now", style: .default, handler: { [weak self] _ in
-            if let urlString = alert.textFields?.first?.text {
-                UserDefaults.standard.set(urlString, forKey: "quizSourceURL")
-                self?.fetcher.fetch(from: urlString)
-            }
+            guard let urlString = alert.textFields?[0].text,
+                  let intervalText = alert.textFields?[1].text,
+                  let interval = Int(intervalText) else { return }
+
+            UserDefaults.standard.set(urlString, forKey: "quizSourceURL")
+            UserDefaults.standard.set(interval, forKey: "refreshInterval")
+
+            self?.fetcher.fetch(from: urlString)
+            self?.startTimedRefresh(with: interval)
         }))
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
         present(alert, animated: true)
     }
 }

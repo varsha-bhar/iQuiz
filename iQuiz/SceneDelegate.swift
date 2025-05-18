@@ -1,9 +1,4 @@
-//
-//  SceneDelegate.swift
-//  iQuiz
-//
-//  Created by Varsha Bharath on 5/15/25.
-//
+
 
 import UIKit
 
