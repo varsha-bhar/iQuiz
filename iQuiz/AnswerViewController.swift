@@ -29,16 +29,16 @@ class AnswerViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configure()
         
-        // Swipe right = next
+        // Swipe gestures
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextTapped))
         rightSwipe.direction = .right
         view.addGestureRecognizer(rightSwipe)
 
-        // Swipe left = exit
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(exitQuiz))
         leftSwipe.direction = .left
         view.addGestureRecognizer(leftSwipe)
-        
+
+        // ✅ Score only if correct
         if let selected = selectedAnswerIndex, selected == correctAnswerIndex {
             correctAnswers += 1
         }
@@ -51,14 +51,11 @@ class AnswerViewController: UIViewController {
             let nextVC = storyboard.instantiateViewController(withIdentifier: "QuestionViewController") as! QuestionViewController
             nextVC.quiz = quiz
             nextVC.currentQuestionIndex = currentQuestionIndex + 1
-
-            // ✅ Pass updated score
             nextVC.correctAnswers = correctAnswers
-
             navigationController?.pushViewController(nextVC, animated: true)
         }
         else {
-            // ✅ Before finishing, set totalQuestions and score
+            // Quiz finished
             performSegue(withIdentifier: "showFinishedScene", sender: self)
         }
     }
@@ -86,10 +83,9 @@ class AnswerViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showFinishedScene",
            let finishedVC = segue.destination as? FinishedViewController {
-            
+            finishedVC.quizTitle = quiz.title
             finishedVC.totalQuestions = quiz.questions.count
             finishedVC.correctAnswers = correctAnswers
-            finishedVC.quizTitle = quiz.title
         }
     }
     

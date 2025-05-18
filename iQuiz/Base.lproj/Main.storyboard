@@ -118,10 +118,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="wq6-qE-eK0">
-                                <rect key="frame" x="162.66666666666666" y="246" width="67.666666666666657" height="81"/>
+                                <rect key="frame" x="162.66666666666666" y="246.00000000000003" width="68" height="111.33333333333334"/>
                                 <subviews>
                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choice 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Sq-bb-eMU">
-                                        <rect key="frame" x="0.0" y="0.0" width="67.666666666666671" height="20.333333333333332"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="68" height="20.333333333333332"/>
                                         <gestureRecognizers/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -132,7 +132,7 @@
                                         </connections>
                                     </label>
                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choice 2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pe1-UE-Sl5" userLabel="Choice 2">
-                                        <rect key="frame" x="0.0" y="30.333333333333314" width="67.666666666666671" height="20.333333333333329"/>
+                                        <rect key="frame" x="0.0" y="30.333333333333314" width="68" height="20.333333333333329"/>
                                         <gestureRecognizers/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -142,7 +142,7 @@
                                         </connections>
                                     </label>
                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choice 3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="frg-yw-fhK" userLabel="Choice 2">
-                                        <rect key="frame" x="0.0" y="60.666666666666693" width="67.666666666666671" height="20.333333333333336"/>
+                                        <rect key="frame" x="0.0" y="60.666666666666693" width="68" height="20.333333333333336"/>
                                         <gestureRecognizers/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -151,10 +151,20 @@
                                             <outletCollection property="gestureRecognizers" destination="cfp-BO-aqh" appends="YES" id="FPQ-Xh-2SB"/>
                                         </connections>
                                     </label>
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choice 4" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V3G-th-Vv0" userLabel="Choice 2">
+                                        <rect key="frame" x="0.0" y="91" width="68" height="20.333333333333329"/>
+                                        <gestureRecognizers/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="mAa-6T-wpC" appends="YES" id="AvV-m8-L0A"/>
+                                        </connections>
+                                    </label>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fXC-8k-Uwg">
-                                <rect key="frame" x="157.66666666666666" y="347" width="78" height="34.333333333333314"/>
+                                <rect key="frame" x="157.66666666666666" y="377.33333333333331" width="78" height="34.333333333333314"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Submit"/>
                                 <connections>
@@ -179,6 +189,7 @@
                         <outlet property="answerLabel1" destination="6Sq-bb-eMU" id="pzM-xG-Yeo"/>
                         <outlet property="answerLabel2" destination="Pe1-UE-Sl5" id="RY5-bP-h8H"/>
                         <outlet property="answerLabel3" destination="frg-yw-fhK" id="EN1-at-gii"/>
+                        <outlet property="answerLabel4" destination="V3G-th-Vv0" id="ciI-CK-TzJ"/>
                         <outlet property="questionLabel" destination="Cur-0g-mRC" id="YIk-9T-L5P"/>
                         <outlet property="submitButton" destination="fXC-8k-Uwg" id="yOq-bS-0Xh"/>
                         <segue destination="s9E-4M-VsX" kind="show" identifier="showAnswerScene" id="HeO-9M-q6c"/>
@@ -198,6 +209,11 @@
                 <tapGestureRecognizer id="cfp-BO-aqh">
                     <connections>
                         <action selector="answerSelect:" destination="JVb-1H-tCa" id="8AL-9d-AZf"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="mAa-6T-wpC">
+                    <connections>
+                        <action selector="answerSelect:" destination="JVb-1H-tCa" id="ATR-4c-48o"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
