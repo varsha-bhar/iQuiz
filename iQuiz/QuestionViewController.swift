@@ -109,11 +109,6 @@ class QuestionViewController: UIViewController {
             dest.quiz = quiz
             dest.currentQuestionIndex = currentQuestionIndex
             dest.correctAnswers = correctAnswers
-
-            // Score tracking
-            if selectedAnswerIndex == dest.correctAnswerIndex {
-                dest.correctAnswers += 1
-            }
         }
     }
     

@@ -6,6 +6,8 @@ class AnswerViewController: UIViewController {
     @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var questionLabel: UILabel!
+    @IBOutlet weak var yourAnswerLabel: UILabel!
+    
     
     var questionText: String = ""
     var answers: [String] = []
@@ -15,51 +17,27 @@ class AnswerViewController: UIViewController {
     var totalQuestions: Int = 0
     var correctAnswers: Int = 0
     var quiz: Quiz!
+    var userAnswer: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configure()
-        
-        // Swipe gestures
-        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextTapped))
-        rightSwipe.direction = .right
-        view.addGestureRecognizer(rightSwipe)
-
-        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(exitQuiz))
-        leftSwipe.direction = .left
-        view.addGestureRecognizer(leftSwipe)
-
-        // ✅ Score only if correct
-        if let selected = selectedAnswerIndex, selected == correctAnswerIndex {
-            correctAnswers += 1
-        }
+        configureGestures()
     }
     
-    @IBAction func nextTapped(_ sender: UIButton) {
-        if currentQuestionIndex + 1 < quiz.questions.count {
-            // Next question
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let nextVC = storyboard.instantiateViewController(withIdentifier: "QuestionViewController") as! QuestionViewController
-            nextVC.quiz = quiz
-            nextVC.currentQuestionIndex = currentQuestionIndex + 1
-            nextVC.correctAnswers = correctAnswers
-            navigationController?.pushViewController(nextVC, animated: true)
-        }
-        else {
-            // Quiz finished
-            performSegue(withIdentifier: "showFinishedScene", sender: self)
-        }
-    }
-    
-    func configure() {
+    private func configure() {
         questionLabel.text = questionText
         correctAnswerLabel.text = "Correct Answer: \(answers[correctAnswerIndex])"
 
         if let selected = selectedAnswerIndex {
+            let selectedAnswer = answers[selected]
+            yourAnswerLabel.text = "You answered: \(selectedAnswer)"
+            
             if selected == correctAnswerIndex {
                 resultLabel.text = "✅ Correct!"
                 resultLabel.textColor = .systemGreen
+                correctAnswers += 1
             }
             else {
                 resultLabel.text = "❌ Incorrect"
@@ -67,8 +45,32 @@ class AnswerViewController: UIViewController {
             }
         }
         else {
+            yourAnswerLabel.text = "You didn’t select an answer"
             resultLabel.text = "No answer selected"
             resultLabel.textColor = .systemGray
+        }
+    }
+
+    private func configureGestures() {
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextTapped))
+        rightSwipe.direction = .right
+        view.addGestureRecognizer(rightSwipe)
+
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(exitQuiz))
+        leftSwipe.direction = .left
+        view.addGestureRecognizer(leftSwipe)
+    }
+    
+    @IBAction func nextTapped(_ sender: UIButton) {
+        if currentQuestionIndex + 1 < quiz.questions.count {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let nextVC = storyboard.instantiateViewController(withIdentifier: "QuestionViewController") as! QuestionViewController
+            nextVC.quiz = quiz
+            nextVC.currentQuestionIndex = currentQuestionIndex + 1
+            nextVC.correctAnswers = correctAnswers
+            navigationController?.pushViewController(nextVC, animated: true)
+        } else {
+            performSegue(withIdentifier: "showFinishedScene", sender: self)
         }
     }
     

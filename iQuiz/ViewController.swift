@@ -97,34 +97,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @objc func showSettings() {
-        let alert = UIAlertController(title: "Settings", message: "Enter quiz source URL and refresh interval (in seconds)", preferredStyle: .alert)
-
-        alert.addTextField { textField in
-            textField.placeholder = "Enter URL"
-            textField.text = UserDefaults.standard.string(forKey: "quizSourceURL") ?? "http://tednewardsandbox.site44.com/questions.json"
+        if let url = URL(string: UIApplication.openSettingsURLString),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
-        
-        // EC refresh in user default
-        alert.addTextField { textField in
-            textField.placeholder = "Refresh interval (seconds)"
-            textField.keyboardType = .numberPad
-            textField.text = "\(UserDefaults.standard.integer(forKey: "refreshInterval"))"
-        }
-
-        alert.addAction(UIAlertAction(title: "Check Now", style: .default, handler: { [weak self] _ in
-            guard let urlString = alert.textFields?[0].text,
-                  let intervalText = alert.textFields?[1].text,
-                  let interval = Int(intervalText) else { return }
-
-            UserDefaults.standard.set(urlString, forKey: "quizSourceURL")
-            UserDefaults.standard.set(interval, forKey: "refreshInterval")
-
-            self?.fetcher.fetch(from: urlString)
-            self?.startTimedRefresh(with: interval)
-        }))
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true)
     }
 }
 
